@@ -7,7 +7,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+faceCascade = cv2.CascadeClassifier("palm.xml")
 
 @app.route('/')
 def test():
@@ -18,12 +18,7 @@ def test():
 def index():
     return redirect("http://127.0.0.1:8888", code=302)
 
-currentCommand = 1
-
-
-@app.route('/api', methods=['GET'])
-def api():
-    return jsonify({'currentCommand': currentCommand})
+currentCommand = 0
 
 def gen_from_cam():
     #cap = cv2.VideoCapture(0)
@@ -51,8 +46,10 @@ def gen_from_cam():
                 print("A")
                 if abs(arr[-1] - arr[0]) > 13000:
                     if arr[-1] > arr[0]:
+                        currentCommand = 3
                         print("increasing")
                     if arr[-1] < arr[0]:
+                        currentCommand = 4
                         print("decreasing")
                 else:
                     print("steady")
@@ -60,8 +57,10 @@ def gen_from_cam():
                 print("B")
                 if abs(arr[-1] - arr[0]) > 13000:
                     if arr[-1] > arr[0]:
+                        currentCommand = 5
                         print("increasing")
                     if arr[-1] < arr[0]:
+                        currentCommand = 6
                         print("decreasing")
                 else:
                     print("steady")
@@ -84,6 +83,11 @@ def gen_from_cam():
 def video_feed():
     return Response(gen_from_cam(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/api', methods=['GET'])
+def api():
+    return jsonify({'currentCommand': currentCommand})
 
 
 if __name__ == '__main__':
