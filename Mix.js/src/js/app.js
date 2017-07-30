@@ -37,6 +37,7 @@
             App.mix.play(position - 10);
           }
           break;
+        // right arrow
         case 39:
           if ( playing ) {
             App.mix.play(position + 10);

@@ -1,19 +1,29 @@
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, redirect, jsonify
 import cv2
 import sys
 import os
 
+from flask_cors import CORS
+app = Flask(__name__)
+CORS(app)
 
 faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-#faceCascade = cv2.CascadeClassifier("hand1.xml")
-
-app = Flask(__name__)
-
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+def test():
+    return render_template('test.html')
 
+
+@app.route('/mix')
+def index():
+    return redirect("http://127.0.0.1:8888", code=302)
+
+currentCommand = 1
+
+
+@app.route('/api', methods=['GET'])
+def api():
+    return jsonify({'currentCommand': currentCommand})
 
 def gen_from_cam():
     #cap = cv2.VideoCapture(0)
