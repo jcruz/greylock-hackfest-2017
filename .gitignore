@@ -9,3 +9,6 @@ npm-debug*
 
 # Remove this line if you want to update the yarn.lock
 yarn.lock
+.DS_STORE
+.idea/
+.idea
