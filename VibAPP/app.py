@@ -1,6 +1,7 @@
 from flask import Flask, render_template, Response, redirect, jsonify
 import cv2
 import sys
+import os
 
 from flask_cors import CORS
 app = Flask(__name__)
@@ -25,7 +26,9 @@ def api():
     return jsonify({'currentCommand': currentCommand})
 
 def gen_from_cam():
-    cap = cv2.VideoCapture(0)
+    #cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture("http://http://192.168.191.107:8080/shot.jpg")
+    arr = []
     while True:
         ret, frame = cap.read()
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -40,10 +43,37 @@ def gen_from_cam():
         for (x, y, w, h) in faces:
             cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
             area = w*h
-            if area > 100000:
-                print("big")
-            else:
-                print("small")
+            #print(area)
+            arr.append(area)
+            if len(arr) > 10:
+                del arr[0]
+            if x < 333:
+                print("A")
+                if abs(arr[-1] - arr[0]) > 13000:
+                    if arr[-1] > arr[0]:
+                        print("increasing")
+                    if arr[-1] < arr[0]:
+                        print("decreasing")
+                else:
+                    print("steady")
+            if x > 333 and x < 666:
+                print("B")
+                if abs(arr[-1] - arr[0]) > 13000:
+                    if arr[-1] > arr[0]:
+                        print("increasing")
+                    if arr[-1] < arr[0]:
+                        print("decreasing")
+                else:
+                    print("steady")
+            if x > 666:
+                print("C")
+                if abs(arr[-1] - arr[0]) > 13000:
+                    if arr[-1] > arr[0]:
+                        print("increasing")
+                    if arr[-1] < arr[0]:
+                        print("decreasing")
+                else:
+                    print("steady")
         cv2.imwrite("test.jpg", frame)
         f = open("test.jpg", 'rb').read()
         yield (b'--frame\r\n'
